@@ -1,0 +1,38 @@
+{
+  "name": "qa-ecommerce-portfolio-project",
+  "version": "1.0.0",
+  "description": "Production-grade, enterprise End-to-End QA Engineering Project testing a mature e-commerce application (nopCommerce) across the full STLC lifecycle.",
+  "author": "Senior QA Engineer / SDET & Test Architect",
+  "license": "MIT",
+  "scripts": {
+    "test": "playwright test --project=chromium",
+    "test:all-browsers": "playwright test",
+    "test:smoke": "playwright test --grep @smoke --project=chromium",
+    "test:regression": "playwright test --grep @regression --project=chromium",
+    "test:critical": "playwright test --grep @critical --project=chromium",
+    "test:customer": "playwright test --grep @customer --project=chromium",
+    "test:admin": "playwright test --grep @admin --project=chromium",
+    "test:api": "playwright test --grep @api --project=chromium",
+    "test:a11y": "playwright test --grep @a11y --project=chromium",
+    "test:headed": "playwright test --project=chromium --headed",
+    "test:debug": "playwright test --project=chromium --debug",
+    "test:ui": "playwright test --ui",
+    "report:html": "playwright show-report reports/playwright-html",
+    "report:allure": "allure generate ./allure-results --clean -o ./allure-report && allure open ./allure-report",
+    "aut:start": "node automation/staging-aut/server.js",
+    "perf:k6": "k6 run performance/k6/smoke-perf.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.9.0",
+    "@types/pg": "^8.11.10",
+    "allure-playwright": "^3.0.7",
+    "typescript": "^5.6.3"
+  }
+}
