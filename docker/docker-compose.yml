@@ -1,7 +1,5 @@
-version: '3.8'
-
 # ==============================================================================
-# DOCKER COMPOSE CONFIGURATION: NOCOMMERCE QA TEST CLUSTER
+# DOCKER COMPOSE CONFIGURATION: NOPCOMMERCE QA TEST CLUSTER
 # ==============================================================================
 # Services:
 # 1. postgresql-qa: PostgreSQL 15 database service for nopCommerce
