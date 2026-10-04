@@ -1,0 +1,77 @@
+version: '3.8'
+
+# ==============================================================================
+# DOCKER COMPOSE CONFIGURATION: NOCOMMERCE QA TEST CLUSTER
+# ==============================================================================
+# Services:
+# 1. postgresql-qa: PostgreSQL 15 database service for nopCommerce
+# 2. nopcommerce-aut: Official nopCommerce 4.70 containerized application
+# 3. playwright-runner: Containerized Playwright test execution agent
+# ==============================================================================
+
+services:
+  postgresql-qa:
+    image: postgres:15-alpine
+    container_name: nop_postgres_qa
+    environment:
+      POSTGRES_DB: nopcommerce_qa
+      POSTGRES_USER: nop_qa
+      POSTGRES_PASSWORD: nop_secure_pwd_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_qa:/var/lib/postgresql/data
+      - ../database/test-data/seed-customers.sql:/docker-entrypoint-initdb.d/01_seed_customers.sql:ro
+      - ../database/test-data/seed-products.sql:/docker-entrypoint-initdb.d/02_seed_products.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nop_qa -d nopcommerce_qa"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - qa-network
+
+  nopcommerce-aut:
+    image: nopcommerce/nopcommerce:latest
+    container_name: nop_ecommerce_aut
+    depends_on:
+      postgresql-qa:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgresql-qa;Port=5432;Database=nopcommerce_qa;Username=nop_qa;Password=nop_secure_pwd_123;
+    ports:
+      - "5000:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    networks:
+      - qa-network
+
+  playwright-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test
+    container_name: nop_playwright_test_runner
+    depends_on:
+      - nopcommerce-aut
+    environment:
+      - BASE_URL=http://nopcommerce-aut:80
+      - CI=true
+      - HEADLESS=true
+    volumes:
+      - ../reports:/app/reports
+      - ../allure-results:/app/allure-results
+    networks:
+      - qa-network
+    profiles:
+      - test-runner
+
+volumes:
+  pgdata_qa:
+
+networks:
+  qa-network:
+    driver: bridge

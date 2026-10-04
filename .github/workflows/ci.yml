@@ -1,0 +1,54 @@
+name: E2E QA Test Automation Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * *' # Nightly regression run at 02:00 UTC
+
+jobs:
+  test:
+    name: Run Automated QA Suites (Playwright)
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers & OS Dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright Tests (Smoke, Regression, API, a11y)
+        run: npx playwright test --project=chromium
+        env:
+          CI: true
+          HEADLESS: true
+          BASE_URL: http://localhost:5001
+
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: reports/playwright-html/
+          retention-days: 14
+
+      - name: Upload JUnit XML Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-results
+          path: reports/junit.xml
+          retention-days: 14
