@@ -26,7 +26,7 @@ pipeline {
             steps {
                 echo 'Installing Node.js packages and Playwright browsers...'
                 sh 'npm ci || npm install'
-                sh 'npx playwright install --with-deps chromium'
+                sh 'npx playwright install chromium'
             }
         }
 
@@ -77,25 +77,7 @@ pipeline {
         always {
             echo 'Archiving test artifacts and reports...'
             archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-            script {
-                try {
-                    junit testResults: 'reports/junit.xml', allowEmptyResults: true
-                } catch (Exception e) {
-                    echo "JUnit publisher step skipped: ${e.message}"
-                }
-                try {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'reports/playwright-html',
-                        reportFiles: 'index.html',
-                        reportName: 'Playwright HTML Report'
-                    ])
-                } catch (Exception e) {
-                    echo "HTML publisher step skipped: ${e.message}"
-                }
-            }
+            junit testResults: 'reports/junit.xml', allowEmptyResults: true
         }
         success {
             echo 'Quality Gate Passed: Release Candidate certified.'
