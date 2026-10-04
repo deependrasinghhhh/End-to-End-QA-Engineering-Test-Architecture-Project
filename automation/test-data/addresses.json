@@ -1,0 +1,26 @@
+{
+  "defaultBillingAddress": {
+    "firstName": "Alex",
+    "lastName": "Mercer",
+    "email": "customer@nopqa.local",
+    "company": "Quality Assurance Labs",
+    "country": "United States",
+    "state": "New York",
+    "city": "New York",
+    "address1": "100 Broadway Suite 400",
+    "zipPostalCode": "10005",
+    "phoneNumber": "2125550199"
+  },
+  "alternativeShippingAddress": {
+    "firstName": "Morgan",
+    "lastName": "Reed",
+    "email": "m.reed@shipping-dest.local",
+    "company": "Fulfillment Hub West",
+    "country": "United States",
+    "state": "California",
+    "city": "San Francisco",
+    "address1": "500 Market Street Floor 12",
+    "zipPostalCode": "94105",
+    "phoneNumber": "4155550188"
+  }
+}

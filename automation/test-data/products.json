@@ -1,0 +1,52 @@
+{
+  "featuredProducts": [
+    {
+      "id": 1,
+      "name": "Build your own computer",
+      "slug": "build-your-own-computer",
+      "category": "Desktops",
+      "basePrice": 1200.00,
+      "sku": "COMP_CUST",
+      "stockQuantity": 50,
+      "attributes": {
+        "processor": "2.5 GHz Intel Core i5 [+$100.00]",
+        "ram": "8GB [+$60.00]",
+        "hdd": "400 GB [+$100.00]",
+        "os": "Windows 10 [+$50.00]",
+        "software": "Microsoft Office [+$50.00]"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Apple MacBook Pro 13-inch",
+      "slug": "apple-macbook-pro-13-inch",
+      "category": "Notebooks",
+      "basePrice": 1800.00,
+      "sku": "AP_MBP_13",
+      "stockQuantity": 25
+    },
+    {
+      "id": 3,
+      "name": "Asus N551JK-XO076H Laptop",
+      "slug": "asus-n551jk-xo076h-laptop",
+      "category": "Notebooks",
+      "basePrice": 1500.00,
+      "sku": "AS_551_LP",
+      "stockQuantity": 15
+    },
+    {
+      "id": 4,
+      "name": "Lenovo IdeaCentre 600 All-in-One PC",
+      "slug": "lenovo-ideacentre-600-all-in-one-pc",
+      "category": "Desktops",
+      "basePrice": 500.00,
+      "sku": "LE_IC_600",
+      "stockQuantity": 40
+    }
+  ],
+  "discounts": {
+    "validCoupon": "DISCOUNT10",
+    "percentage": 10,
+    "invalidCoupon": "INVALID999"
+  }
+}

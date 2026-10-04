@@ -1,0 +1,35 @@
+{
+  "shippingMethods": {
+    "ground": {
+      "name": "Ground",
+      "fee": 0.00
+    },
+    "nextDayAir": {
+      "name": "Next Day Air",
+      "fee": 40.00
+    },
+    "secondDayAir": {
+      "name": "2nd Day Air",
+      "fee": 20.00
+    }
+  },
+  "paymentMethods": {
+    "checkMoneyOrder": "Check / Money Order",
+    "creditCard": "Credit Card",
+    "cod": "Cash On Delivery (COD)"
+  },
+  "creditCard": {
+    "cardholderName": "Alex Mercer",
+    "cardNumber": "4111111111111111",
+    "expireMonth": "12",
+    "expireYear": "2028",
+    "cardCode": "123"
+  },
+  "invalidCreditCard": {
+    "cardholderName": "Bad Cardholder",
+    "cardNumber": "4111111111111119",
+    "expireMonth": "01",
+    "expireYear": "2020",
+    "cardCode": "000"
+  }
+}

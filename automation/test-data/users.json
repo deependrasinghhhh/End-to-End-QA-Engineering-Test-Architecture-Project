@@ -1,0 +1,32 @@
+{
+  "customerUser": {
+    "gender": "male",
+    "firstName": "Alex",
+    "lastName": "Mercer",
+    "email": "customer@nopqa.local",
+    "password": "TestPassword123!",
+    "company": "Quality Assurance Labs"
+  },
+  "adminUser": {
+    "email": "admin@nopqa.local",
+    "password": "AdminPassword123!",
+    "role": "Administrators"
+  },
+  "invalidUsers": [
+    {
+      "description": "Non-existent user",
+      "email": "ghost_customer_999@test.local",
+      "password": "WrongPassword123!"
+    },
+    {
+      "description": "Valid email but wrong password",
+      "email": "customer@nopqa.local",
+      "password": "IncorrectPassword999!"
+    }
+  ],
+  "boundaryRegistration": {
+    "minPassword": "123456",
+    "shortPassword": "12345",
+    "mismatchedConfirm": "Mismatch123!"
+  }
+}
