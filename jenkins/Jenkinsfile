@@ -4,14 +4,9 @@ pipeline {
     environment {
         CI = 'true'
         HEADLESS = 'true'
-        BASE_URL = credentials('NOP_BASE_URL') // Or fallback to http://localhost:5001
+        BASE_URL = 'http://localhost:5001'
         RETRIES = '2'
         DEFAULT_TIMEOUT = '30000'
-        // Test management placeholders
-        JIRA_URL = credentials('JIRA_BASE_URL')
-        JIRA_TOKEN = credentials('JIRA_API_TOKEN')
-        XRAY_CLIENT_ID = credentials('XRAY_CLIENT_ID')
-        XRAY_CLIENT_SECRET = credentials('XRAY_CLIENT_SECRET')
     }
 
     options {
@@ -31,7 +26,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Node.js packages and Playwright browsers...'
-                sh 'npm ci'
+                sh 'npm ci || npm install'
                 sh 'npx playwright install --with-deps chromium'
             }
         }
@@ -46,28 +41,28 @@ pipeline {
         stage('API Tests') {
             steps {
                 echo 'Executing API contract and functional validation suite...'
-                sh 'npx playwright test --grep "@api"'
+                sh 'npx playwright test --grep "@api" --project=chromium'
             }
         }
 
         stage('Smoke Tests') {
             steps {
                 echo 'Executing critical smoke gate...'
-                sh 'npx playwright test --grep "@smoke"'
+                sh 'npx playwright test --grep "@smoke" --project=chromium'
             }
         }
 
         stage('Regression Tests') {
             steps {
                 echo 'Executing functional regression test suite...'
-                sh 'npx playwright test --grep "@regression"'
+                sh 'npx playwright test --grep "@regression" --project=chromium'
             }
         }
 
         stage('Accessibility Checks') {
             steps {
                 echo 'Executing axe-core WCAG 2.1 Level AA automated audit...'
-                sh 'npx playwright test accessibility/tests/accessibility.spec.ts'
+                sh 'npx playwright test accessibility/tests/accessibility.spec.ts --project=chromium'
             }
         }
 
