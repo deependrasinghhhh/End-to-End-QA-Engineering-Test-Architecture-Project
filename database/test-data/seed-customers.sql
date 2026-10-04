@@ -2,6 +2,26 @@
 -- TEST DATA SEED SCRIPT: CUSTOMER ACCOUNTS & ROLES
 -- ==============================================================================
 
+-- 0. Ensure Tables Exist
+CREATE TABLE IF NOT EXISTS "Customer" (
+    "Id" SERIAL PRIMARY KEY,
+    "CustomerGuid" VARCHAR(64),
+    "Email" VARCHAR(255),
+    "Username" VARCHAR(255),
+    "Active" BOOLEAN DEFAULT TRUE,
+    "Deleted" BOOLEAN DEFAULT FALSE,
+    "IsSystemAccount" BOOLEAN DEFAULT FALSE,
+    "SystemName" VARCHAR(255),
+    "CreatedOnUtc" TIMESTAMP DEFAULT NOW(),
+    "LastActivityDateUtc" TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "Customer_CustomerRole_Mapping" (
+    "Customer_Id" INT,
+    "CustomerRole_Id" INT,
+    PRIMARY KEY ("Customer_Id", "CustomerRole_Id")
+);
+
 -- 1. Insert Standard QA Customer Account (Password: TestPassword123!)
 INSERT INTO "Customer" (
     "Id", "CustomerGuid", "Email", "Username", "Active", "Deleted", 

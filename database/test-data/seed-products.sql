@@ -2,6 +2,23 @@
 -- TEST DATA SEED SCRIPT: BASELINE PRODUCTS & CATEGORIES
 -- ==============================================================================
 
+-- 0. Ensure Product Table Exists
+CREATE TABLE IF NOT EXISTS "Product" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(400) NOT NULL,
+    "ShortDescription" TEXT,
+    "FullDescription" TEXT,
+    "Sku" VARCHAR(100),
+    "Price" DECIMAL(18, 4) NOT NULL DEFAULT 0.0,
+    "OldPrice" DECIMAL(18, 4) NOT NULL DEFAULT 0.0,
+    "StockQuantity" INT NOT NULL DEFAULT 100,
+    "ManageInventoryMethodId" INT DEFAULT 1,
+    "Published" BOOLEAN DEFAULT TRUE,
+    "Deleted" BOOLEAN DEFAULT FALSE,
+    "CreatedOnUtc" TIMESTAMP DEFAULT NOW(),
+    "UpdatedOnUtc" TIMESTAMP DEFAULT NOW()
+);
+
 INSERT INTO "Product" (
     "Id", "Name", "ShortDescription", "FullDescription", "Sku", "Price", 
     "OldPrice", "StockQuantity", "ManageInventoryMethodId", "Published", "Deleted", "CreatedOnUtc", "UpdatedOnUtc"
