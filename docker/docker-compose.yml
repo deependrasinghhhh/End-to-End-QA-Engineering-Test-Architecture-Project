@@ -67,8 +67,21 @@ services:
     profiles:
       - test-runner
 
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: nop_jenkins_ci
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - qa-network
+
 volumes:
   pgdata_qa:
+  jenkins_home:
 
 networks:
   qa-network:
