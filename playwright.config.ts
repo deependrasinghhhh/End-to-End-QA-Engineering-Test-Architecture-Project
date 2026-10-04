@@ -36,7 +36,10 @@ export default defineConfig({
     video: 'retain-on-failure',
     actionTimeout: parseInt(process.env.ACTION_TIMEOUT || '15000'),
     navigationTimeout: 30000,
-    headless: process.env.HEADLESS !== 'false'
+    headless: process.env.HEADLESS !== 'false',
+    launchOptions: {
+      slowMo: process.env.SLOWMO ? parseInt(process.env.SLOWMO, 10) : 0
+    }
   },
 
   projects: [
