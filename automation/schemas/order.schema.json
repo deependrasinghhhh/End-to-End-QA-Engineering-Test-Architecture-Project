@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OrderResponse",
+  "type": "object",
+  "required": ["orderNumber", "status", "total"],
+  "properties": {
+    "orderNumber": {
+      "type": "string"
+    },
+    "customerId": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["productId", "quantity", "unitPrice"],
+        "properties": {
+          "productId": { "type": "integer" },
+          "name": { "type": "string" },
+          "quantity": { "type": "integer" },
+          "unitPrice": { "type": "number" }
+        }
+      }
+    },
+    "total": {
+      "type": "number"
+    },
+    "createdAt": {
+      "type": "string"
+    }
+  }
+}

@@ -18,7 +18,7 @@ export class OrderApi {
   }
 
   async getAdminOrders(adminToken?: string): Promise<APIResponse> {
-    const headers = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
+    const headers: Record<string, string> = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
     return await this.request.get('/api/admin/orders', { headers });
   }
 
