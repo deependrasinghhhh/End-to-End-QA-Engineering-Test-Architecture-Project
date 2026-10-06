@@ -1,119 +1,87 @@
-# MASTER TEST STRATEGY
+# Master QA Test Strategy
 
-**Project Name:** nopCommerce v4.70 Enterprise Quality Engineering  
-**Document ID:** STRAT-NOP-4.70  
-**Version:** 1.0.0  
-**Author:** QA Lead & Test Architect  
-**Classification:** Internal Quality Standard  
+> **Project Description:**  
+> A Playwright + TypeScript QA automation portfolio project testing a deterministic, nopCommerce-inspired local staging simulator. It demonstrates QA test design, UI/API automation, accessibility checks, CI, and supporting QA artifacts. It is not a production certification or a claim of testing upstream nopCommerce.
 
 ---
 
-## 1. Introduction & Strategy Objectives
+## 1. Strategy Objectives & Scope
 
-This Master Test Strategy establishes the overarching engineering principles, verification methodologies, and governance gates for testing nopCommerce v4.70. Our objective is to ensure that software delivered into production satisfies all functional requirements, maintains data integrity across persistence layers, complies with accessibility mandates, and exhibits high reliability under operational workloads.
+This Master Test Strategy establishes the engineering principles, verification methodologies, and quality gates demonstrated in this portfolio repository.
+
+Our objective is to showcase:
+- Deterministic, zero-flakiness end-to-end web automation using Playwright + TypeScript.
+- REST API contract testing with Ajv schema validation.
+- Automated accessibility audits using axe-core on critical routes.
+- CI pipeline integration via GitHub Actions.
+- Industry-standard QA documentation templates (RTM, Defect logs, RCA, and Test Closure).
 
 ---
 
-## 2. Test Levels & Testing Pyramid
+## 2. Test Architecture & Testing Pyramid
 
-We adhere to the disciplined agile testing pyramid to maximize defect detection velocity while minimizing execution feedback cycles:
+The project structures testing across distinct layers:
 
-```
+```text
                / \
               /   \
-             / E2E \          <-- 15% (Playwright Full User Journeys)
+             / E2E \         <-- 37 UI Playwright Tests (Smoke, Regression, Critical)
             /-------\
-           /   API   \        <-- 30% (Playwright APIRequestContext + Postman)
+           /   API   \       <-- 8 API Contract Tests (Playwright APIRequestContext + Ajv)
           /-----------\
-         / Integration \      <-- 25% (DB Integrity, Component State)
+         /    A11y     \     <-- 5 Automated axe-core audits (WCAG 2.1 AA)
         /---------------\
-       /      Unit       \    <-- 30% (Underlying Dev Tests / Core Logic)
+       / Manual Queries  \   <-- Reference SQL query library (database/)
       +-------------------+
 ```
 
-1. **System & E2E Testing (UI):** Automated with Playwright + TypeScript using the Page Object Model (POM), validating full end-to-end customer and administrative journeys.
-2. **API & Contract Testing:** Direct REST validation via Playwright `request` fixture and Postman collections, verifying payload schemas, response codes, and business validations without UI overhead.
-3. **Database & Data Layer Testing:** SQL scripts executed against PostgreSQL 15, asserting table row consistency, foreign key cascades, and inventory decrements.
-4. **Non-Functional Testing:** Axe-core for automated accessibility audits, k6 for API load and latency benchmarks, and cross-browser execution on Chromium, Firefox, and WebKit.
+1. **System & E2E Testing (UI):** 37 tests automated with Playwright + TypeScript using the Page Object Model (POM), validating customer and administrative journeys on the local staging simulator.
+2. **API Contract Testing:** 8 tests validating status codes, request parameters, and response structures compiled against Ajv JSON Schemas.
+3. **Automated Accessibility Testing:** 5 tests executing `@axe-core/playwright` audits across five core simulator routes.
+4. **Manual SQL Validation Library:** Reference SQL queries under `database/` demonstrating manual data inspection and relational schema audits.
 
 ---
 
-## 3. Test Types Defined
+## 3. Test Automation Suite Distribution (50 Tests)
 
-| Test Type | Objective | Frequency / Trigger | Automation Tool |
-|:---|:---|:---|:---:|
-| **Build Verification (Smoke)** | Validate fundamental build health & core critical paths | Every commit / PR / Deploy | Playwright (`@smoke`) |
-| **Functional Regression** | Ensure new changes have not broken existing capabilities | Nightly / Pre-Release | Playwright (`@regression`) |
-| **Critical Business Paths** | Full end-to-end purchasing and order fulfillment flows | Pre-deployment & Staging | Playwright (`@critical`) |
-| **API Contract Validation** | Validate HTTP status, JSON schema, and payload rules | CI Pipeline stage | Playwright API / Postman |
-| **Database Integrity** | Validate data consistency across UI, API, and DB | Scheduled regression / Post-order | PostgreSQL / DBeaver |
-| **Accessibility (a11y)** | Ensure WCAG 2.1 Level AA compliance on key views | CI Pipeline stage | `@axe-core/playwright` |
-| **Performance Benchmark** | Measure API p95 latency and concurrent user capacity | Sprint hardening cycle | k6 |
-| **Cross-Browser** | Verify layout and behavior parity across browsers | Pre-release regression | Playwright Multi-Project |
-| **Exploratory & Edge Cases** | Unscripted human testing focused on edge scenarios | Sprint execution | Jira Defect Tracking |
-
----
-
-## 4. Test Environment Strategy
-
-```
-+--------------------+      +--------------------+      +--------------------+
-|  DEVELOPER / LOCAL | ---> |     QA STAGING     | ---> |     PRODUCTION     |
-| Local Mock / Docker|      | Isolated AUT + DB  |      | Production Staging |
-| Zero network lag   |      | CI/CD Target       |      | Release Validation |
-+--------------------+      +--------------------+      +--------------------+
-```
-
-All tests support execution against parameterized `BASE_URL` targets via `.env`:
-- Local Staging AUT (`http://localhost:5001`)
-- Dockerized nopCommerce container (`http://localhost:5000`)
-- Public / Staging instances (`https://demo.nopcommerce.com`)
+| Suite / Module | Tag | Test Count | Spec Location |
+|:---|:---|:---:|:---|
+| **Smoke Suite** | `@smoke` | 8 | `automation/tests/smoke/smoke.spec.ts` |
+| **Regression Suite** | `@regression` | 19 | `automation/tests/regression/` |
+| **Critical End-to-End Paths** | `@critical` | 3 | `automation/tests/critical/critical-paths.spec.ts` |
+| **Customer Portal** | `@customer` | 3 | `automation/tests/customer/customer-account.spec.ts` |
+| **Admin Backoffice** | `@admin` | 4 | `automation/tests/admin/` |
+| **API Contract Validation** | `@api` | 8 | `automation/tests/api/api-customer-order.spec.ts` |
+| **Accessibility Audit** | `@a11y` | 5 | `accessibility/tests/accessibility.spec.ts` |
+| **TOTAL AUTOMATED TESTS** | — | **50** | **Chromium execution via GitHub Actions** |
 
 ---
 
-## 5. Quality Gates: Entry, Exit, Suspension & Resumption Criteria
+## 4. Test Environment Architecture
 
-### 5.1 Entry Criteria for Testing Cycle
-- [x] Code build deployed successfully to the target test environment.
-- [x] Release notes detailing included user stories, fixes, and configuration changes provided.
-- [x] PostgreSQL database seeded with consistent test data.
-- [x] Smoke test suite passes with 100% success rate.
-
-### 5.2 Exit Criteria for Release Sign-Off
-- [x] 100% of planned test cases executed.
-- [x] Overall test pass rate $\ge 95\%$.
-- [x] Zero open P0 (Blocker) or P1 (Critical) defects.
-- [x] All P2 (Major) defects have approved business workarounds or deferred waivers.
-- [x] 100% of automated smoke and critical path tests passing in CI.
-- [x] Accessibility audit displays 0 critical/serious WCAG violations.
-- [x] Performance test verifies API p95 response time $\le 500$ ms.
-- [x] Formal QA Sign-Off document signed by QA Architect and Engineering Lead.
-
-### 5.3 Suspension Criteria
-- Testing shall be suspended if $> 30\%$ of smoke tests fail, the test environment becomes unresponsive, or blocking defects prevent progress across core checkout/catalog modules.
-
-### 5.4 Resumption Criteria
-- Testing shall resume once Development deploys a remediated build and the automated Smoke suite successfully re-passes.
+- **Primary AUT:** `automation/staging-aut/server.js` running on `http://localhost:5001`.
+  - In-memory state initialized via `createInitialState()`.
+  - State reset endpoint `POST /api/test/reset` enabled via `ALLOW_TEST_RESET=true`.
+  - Automated auto-fixture `resetSimulatorState` executes before every test to guarantee test isolation.
+- **Optional Reference Environment:** Containerized stack in `docker/docker-compose.yml` (nopCommerce 4.70 + PostgreSQL 15). Not executed in CI.
 
 ---
 
-## 6. Defect Management & Severity Matrix
+## 5. Quality Gates & Release Readiness (Template Framework)
 
-Defects are managed in Jira with the following severity definitions:
+In an enterprise environment, quality gates govern promotion across environments:
 
-| Severity | Definition | SLA for Remediation | Release Impact |
-|:---:|:---|:---:|:---:|
-| **P0 - Blocker** | System crash, severe data corruption, inability to place orders, security vulnerability. | 4 hours | Blocks Release |
-| **P1 - Critical** | Major functionality failure with no workaround (e.g., payment gateway failure). | 24 hours | Blocks Release |
-| **P2 - Major** | Important feature malfunction with an acceptable workaround. | 3-5 days | Requires Waiver |
-| **P3 - Minor** | Non-critical functional glitch, UI misalignment, minor text typo. | Next Sprint | Non-blocking |
+1. **Build Gate:** `npm run lint` and `npm run typecheck` pass with 0 errors.
+2. **Smoke Gate:** 100% of `@smoke` tests pass (< 15 seconds execution time).
+3. **Regression Gate:** 100% of defined Playwright tests pass against Chromium in CI.
+4. **Accessibility Gate:** Zero critical or serious axe-core violations on audited routes.
+5. **Defect Triage Gate:** Zero open Blocker (S1) or Critical defects.
 
 ---
 
-## 7. Automation Engineering Strategy
+## 6. Automation Engineering Standards
 
-1. **Architecture:** Page Object Model (POM) separating locator selectors and page actions from test logic.
-2. **Determinism:** Zero use of arbitrary `page.waitForTimeout()`; all interactions rely on Playwright auto-waiting locators and explicit assertions (`expect(locator).toBeVisible()`).
-3. **Data Isolation:** Dynamic test data generators creating unique emails and addresses to avoid test cross-talk.
-4. **State Reuse:** Playwright storage state fixtures to preserve authentication across tests where login is not the test target.
-5. **Continuous Reporting:** HTML Reports, Allure annotations, and JUnit XML outputs produced natively for CI consumption.
+1. **Page Object Model (POM):** Locators and page operations encapsulated in reusable classes under `automation/pages/`.
+2. **Web-First Assertions:** Use Playwright's auto-retrying assertions (`await expect(locator).toBeVisible()`) exclusively; avoid arbitrary fixed sleeps.
+3. **Fixture-Driven Isolation:** Test fixtures in `automation/fixtures/` handle authenticated browser state and simulator reset.
+4. **Machine-Readable Reports:** Produces JUnit XML (`reports/junit.xml`) and HTML reports retained as CI artifacts.

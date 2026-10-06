@@ -13,11 +13,11 @@ export const ENV = {
   ACTION_TIMEOUT: parseInt(process.env.ACTION_TIMEOUT || '15000', 10),
   RETRIES: process.env.CI ? 2 : parseInt(process.env.RETRIES || '1', 10),
   ADMIN_USER: {
-    email: process.env.ADMIN_EMAIL || 'admin@nopqa.local',
-    password: process.env.ADMIN_PASSWORD || 'AdminPassword123!'
+    email: process.env.QA_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@nopqa.local',
+    password: process.env.QA_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'AdminPassword123!'
   },
   DEFAULT_CUSTOMER: {
-    email: process.env.CUSTOMER_EMAIL || 'customer@nopqa.local',
-    password: process.env.CUSTOMER_PASSWORD || 'TestPassword123!'
+    email: process.env.QA_CUSTOMER_EMAIL || process.env.CUSTOMER_EMAIL || 'customer@nopqa.local',
+    password: process.env.QA_CUSTOMER_PASSWORD || process.env.CUSTOMER_PASSWORD || 'TestPassword123!'
   }
 };

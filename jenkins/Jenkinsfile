@@ -80,10 +80,10 @@ pipeline {
             junit testResults: 'reports/junit.xml', allowEmptyResults: true
         }
         success {
-            echo 'Quality Gate Passed: Release Candidate certified.'
+            echo 'Quality Gate Passed: Chromium test suites completed successfully.'
         }
         failure {
-            echo 'Quality Gate Failed: One or more test suites failed. Notifying QA and Dev teams.'
+            echo 'Quality Gate Failed: One or more test suites failed.'
         }
     }
 }

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../automation/fixtures/test.fixture';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Automated Accessibility Testing (WCAG 2.1 Level AA) @a11y', () => {

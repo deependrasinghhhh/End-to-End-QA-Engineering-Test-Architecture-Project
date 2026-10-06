@@ -15,11 +15,7 @@ blob-report/
 playwright/.cache/
 allure-results/
 allure-report/
-reports/*.xml
-reports/*.html
-reports/screenshots/
-reports/videos/
-reports/traces/
+reports/*
 !reports/.gitkeep
 
 # Logs & Runtime

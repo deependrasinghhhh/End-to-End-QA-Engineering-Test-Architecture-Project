@@ -8,14 +8,21 @@ test.describe('Checkout Flow & Validation Regression Suite', () => {
     await homePage.waitForNotification();
   });
 
-  test('CHK-REG-01: Terms of service required prior to checkout @regression', async ({ cartPage }) => {
+  test('CHK-REG-01: Terms of service required prior to checkout @regression', async ({ cartPage, page }) => {
     await cartPage.open();
-    await cartPage.acceptNextDialog();
-    await cartPage.proceedToCheckout(false);
+    let dialogMessage = '';
+    page.once('dialog', async dialog => {
+      dialogMessage = dialog.message();
+      await dialog.accept();
+    });
+    await cartPage.checkoutButton.click();
+    expect(dialogMessage).toBe('Please accept the terms of service before checkout');
+    await expect(page).toHaveURL(/.*cart/);
   });
 
   test('CHK-REG-02: Multi-step accordion navigation from Billing through Confirm @regression', async ({
     checkoutPage,
+    cartPage,
     page
   }) => {
     await checkoutPage.open();
@@ -41,9 +48,22 @@ test.describe('Checkout Flow & Validation Regression Suite', () => {
     await checkoutPage.confirmPaymentInfo();
     await expect(checkoutPage.confirmOrderStep).toHaveClass(/active/);
 
-    // Confirm
+    // Confirm order
     await checkoutPage.confirmOrder();
     await expect(page).toHaveURL(/.*checkout\/completed\/.*/);
+
+    // Verify order completion confirmation and order number
+    const completedMsg = page.locator('.order-completed .title');
+    await expect(completedMsg).toBeVisible();
+    await expect(completedMsg).toHaveText('Your order has been successfully processed!');
+    const orderNumberEl = page.locator('.order-number');
+    await expect(orderNumberEl).toBeVisible();
+    await expect(orderNumberEl).toContainText('Order number:');
+
+    // Verify post-checkout cart cleanup
+    await cartPage.open();
+    await expect(cartPage.emptyCartMessage).toBeVisible();
+    await expect(cartPage.emptyCartMessage).toHaveText('Your Shopping Cart is empty!');
   });
 
 });

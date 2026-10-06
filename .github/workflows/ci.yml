@@ -30,7 +30,13 @@ jobs:
       - name: Install Playwright Browsers & OS Dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright Tests (Smoke, Regression, API, a11y)
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript Typecheck
+        run: npm run typecheck
+
+      - name: Run Playwright Tests (50 Tests: Smoke, Regression, Critical, Customer, Admin, API, A11y)
         run: npx playwright test --project=chromium
         env:
           CI: true

@@ -1,5 +1,9 @@
 # DBeaver Database Validation & Inspection Guide
 
+> **Status:** Manual Tool Reference Guide (Optional Environment)  
+> **Target:** Experimental PostgreSQL instance (e.g. `docker compose up postgresql-qa`)  
+> **Note:** Automated Playwright runs test against the in-memory simulator and do not require DBeaver or PostgreSQL.
+
 ## 1. Introduction
 This guide instructs QA Engineers and SDETs on configuring **DBeaver Community Edition** to inspect, validate, and debug relational data in the nopCommerce PostgreSQL staging and local test environments.
 

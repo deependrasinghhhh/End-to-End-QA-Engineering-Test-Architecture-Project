@@ -30,7 +30,7 @@ services:
       - qa-network
 
   nopcommerce-aut:
-    image: nopcommerce/nopcommerce:latest
+    image: nopcommerce/nopcommerce:4.70.0
     container_name: nop_ecommerce_aut
     depends_on:
       postgresql-qa:

@@ -1,11 +1,6 @@
-import { test, expect } from '../../fixtures/test.fixture';
+import { testAsAdmin as test, expect } from '../../fixtures/auth.fixture';
 
 test.describe('Admin Backoffice Catalog Management Suite', () => {
-
-  test.beforeEach(async ({ adminLoginPage }) => {
-    await adminLoginPage.open();
-    await adminLoginPage.login('admin@nopqa.local', 'AdminPassword123!');
-  });
 
   test('ADM-CAT-01: Admin product catalog search by product name @admin', async ({ adminProductsPage }) => {
     await adminProductsPage.open();

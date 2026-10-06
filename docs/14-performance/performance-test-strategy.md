@@ -1,69 +1,57 @@
-# Performance Test Strategy & Non-Functional SLOs
+# Performance Test Strategy & Workload Profiles
+
+> **Target Tool:** k6 by Grafana Labs (`performance/k6/`)  
+> **Target Environment:** Local staging simulator (`automation/staging-aut/server.js`)  
+> **Status:** Performance scripting library for local and staging benchmark evaluations.
+
+---
 
 ## 1. Strategy Overview
-The Performance Testing Strategy for nopCommerce v4.70 verifies the throughput, responsiveness, scalability, and system resource stability under expected and peak e-commerce traffic conditions.
 
-Testing is executed using **k6** by Grafana Labs (`performance/k6/`), chosen for its developer-friendly JavaScript/TypeScript scripting, minimal memory footprint, and native CI/CD integration.
+The performance testing suite provides lightweight load, stress, and soak scripting examples targeting core e-commerce endpoints.
 
----
-
-## 2. Service Level Objectives (SLOs) & Non-Functional Requirements
-
-| Metric | Target Threshold | Critical Failure Threshold |
-| :--- | :---: | :---: |
-| **Catalog Browsing (p95)** | < 300 ms | > 600 ms |
-| **Search Queries (p95)** | < 400 ms | > 800 ms |
-| **Cart Operations (p95)** | < 350 ms | > 700 ms |
-| **Checkout Submission (p95)** | < 500 ms | > 1,200 ms |
-| **Overall HTTP Error Rate** | < 0.5% | > 1.0% |
-| **System Throughput** | >= 100 RPS | < 50 RPS |
-| **CPU Utilization (Web Server)**| < 70% | > 85% |
-| **Memory Growth (2h Soak)** | Steady (no leaks) | > 20% Unreclaimed |
+Testing is codified using JavaScript scripts in `performance/k6/` designed to run locally against the staging simulator on port 5001.
 
 ---
 
-## 3. Performance Test Profiles & Scenarios
+## 2. Defined Workload Profiles
 
-The suite includes four distinct workload models implemented under `performance/k6/`:
+The scripts model four distinct traffic patterns:
 
-### 1. Smoke Performance Test (`smoke-perf.js`)
-- **Objective:** Verify scripts execute without errors and establish minimal load baseline.
-- **Profile:** 1-5 Virtual Users (VUs) for 1 minute.
-- **Gate:** 100% requests succeed with p95 < 200ms.
+### 1. Smoke Performance (`performance/k6/smoke-perf.js`)
+- **Profile:** 5 Virtual Users (VUs) for 10 seconds.
+- **Scope:** GET `/`, GET `/api/catalog/products`, GET `/api/catalog/search?q=computer`.
+- **Objective:** Quick sanity check of simulator response readiness.
 
-### 2. Load Test — Catalog & Browsing (`load-test-catalog.js`)
-- **Objective:** Simulate typical sustained peak daily shopping activity.
-- **Profile:** Ramp up to 50 VUs over 2 minutes, hold at 50 VUs for 5 minutes, ramp down over 1 minute.
-- **User Journey:** Homepage -> Category Navigation -> Product Details -> Search.
+### 2. Catalog Browsing Load (`performance/k6/load-test-catalog.js`)
+- **Profile:** Ramp to 10 VUs (5s), hold at 25 VUs (15s), ramp down to 0 VUs (5s).
+- **Scope:** Category page navigation (`/computers`, `/desktops`).
+- **Objective:** Evaluates response times under moderate concurrent category queries.
 
-### 3. Stress Test — Authentication & Checkout (`stress-test-login.js`)
-- **Objective:** Identify the application breaking point and test graceful degradation under traffic surges (e.g. Flash Sales, Black Friday).
-- **Profile:** Ramp up from 10 to 150 VUs in stages.
-- **User Journey:** Customer Login -> Add Item to Cart -> Checkout API Call.
+### 3. Authentication Stress (`performance/k6/stress-test-login.js`)
+- **Profile:** Ramp to 20 VUs (5s), spike to 50 VUs (10s), ramp down to 0 VUs (5s).
+- **Scope:** POST `/api/auth/login`.
+- **Objective:** Evaluates authentication endpoint throughput under concurrent login spikes.
 
-### 4. Soak / Endurance Test (`soak-test-cart.js`)
-- **Objective:** Detect memory leaks, unclosed database connection pools, or cache degradation over extended durations.
-- **Profile:** Constant 25 VUs sustained over 2 to 4 hours.
+### 4. Cart Soak / Endurance (`performance/k6/soak-test-cart.js`)
+- **Profile:** Ramp to 10 VUs (5s), sustained 10 VUs for 20s, ramp down to 0 VUs (5s).
+- **Scope:** POST `/api/cart/items`.
+- **Objective:** Validates session and cart addition stability over sustained iterations.
 
 ---
 
-## 4. Execution Commands
+## 3. How to Run Scripts
 
 ```bash
-# Run Smoke Performance Test
-k6 run performance/k6/smoke-perf.js
+# Smoke test (5 VUs, 10s)
+npm run perf:k6
 
-# Run Standard Load Test with HTML Summary Export
+# Catalog load test
 k6 run performance/k6/load-test-catalog.js
 
-# Run Stress Test with InfluxDB / Datadog Metrics Streaming
-k6 run --out json=reports/k6-metrics.json performance/k6/stress-test-login.js
+# Login stress test
+k6 run performance/k6/stress-test-login.js
+
+# Cart soak test
+k6 run performance/k6/soak-test-cart.js
 ```
-
----
-
-## 5. Monitoring & Infrastructure Telemetry
-During performance test execution, the following infrastructure layers are actively monitored:
-- **Application Process:** Node.js / .NET Core runtime CPU, heap memory, garbage collection pauses.
-- **PostgreSQL Database:** Active connections (`pg_stat_activity`), cache hit ratio (`pg_stat_database`), locks, and slow queries.
-- **Operating System:** Docker host CPU, memory, network I/O, disk I/O.

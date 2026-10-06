@@ -13,13 +13,18 @@ test.describe('Shopping Cart & Coupon Regression Suite', () => {
     const count = await cartPage.getLineItemCount();
     expect(count).toBeGreaterThanOrEqual(1);
     await expect(cartPage.cartRows.first().locator('.product-name')).toContainText('Build your own computer');
+    await expect(cartPage.cartRows.first().locator('.product-unit-price')).toHaveText('$1200.00');
+    await expect(cartPage.cartRows.first().locator('.qty-input')).toHaveValue('1');
+    await expect(cartPage.cartRows.first().locator('.product-subtotal')).toHaveText('$1200.00');
   });
 
   test('CART-REG-02: Quantity update updates subtotal @regression', async ({ cartPage }) => {
     await cartPage.open();
     await cartPage.updateItemQuantity(0, 3);
-    const subtotal = await cartPage.subtotalText.innerText();
-    expect(subtotal).toBeTruthy();
+    await expect(cartPage.cartRows.first().locator('.qty-input')).toHaveValue('3');
+    await expect(cartPage.cartRows.first().locator('.product-subtotal')).toHaveText('$3600.00');
+    await expect(cartPage.subtotalText).toHaveText('$3600.00');
+    await expect(cartPage.orderTotalText).toContainText('$3888.00');
   });
 
   test('CART-REG-03: Invalid coupon code displays error alert @regression', async ({ cartPage }) => {
@@ -33,14 +38,20 @@ test.describe('Shopping Cart & Coupon Regression Suite', () => {
     await cartPage.open();
     await cartPage.applyCoupon('DISCOUNT10');
     await expect(page).toHaveURL(/.*coupon=applied/);
+    const discountRow = page.locator('.order-discount .value-summary');
+    await expect(discountRow).toBeVisible();
+    await expect(discountRow).toHaveText('-$120.00');
   });
 
   test('CART-REG-05: Remove item clears line from table @regression', async ({ cartPage }) => {
     await cartPage.open();
     const initialCount = await cartPage.getLineItemCount();
-    if (initialCount > 0) {
-      await cartPage.removeItem(0);
-    }
+    expect(initialCount).toBeGreaterThanOrEqual(1);
+    await cartPage.removeItem(0);
+    await expect(cartPage.emptyCartMessage).toBeVisible();
+    await expect(cartPage.emptyCartMessage).toHaveText('Your Shopping Cart is empty!');
+    const finalCount = await cartPage.getLineItemCount();
+    expect(finalCount).toBe(0);
   });
 
 });

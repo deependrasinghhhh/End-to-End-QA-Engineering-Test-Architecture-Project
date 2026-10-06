@@ -1,75 +1,53 @@
-# Formal QA Sign-Off Certificate — Release v4.70.0
+# Release Readiness Checklist Template — Example
 
-**Document Reference:** `QA-SIGNOFF-2026-v4.70-001`  
-**Date of Issuance:** September 30, 2026  
-**Target Release:** nopCommerce Enterprise v4.70.0  
-**Candidate Build Certified:** `v4.70-b112`  
-**Evaluation Environment:** QA Staging & Pre-Production Environment  
+> **Document Type:** Process Template / Quality Artifact Example  
+> **Status:** Template for demonstrating QA release readiness governance. This document provides a structured example and does not represent an actual commercial production release certification.
 
 ---
 
-## 1. Executive Summary & Recommendation
+## 1. Release Readiness Evaluation Process
 
-The Quality Assurance and Test Engineering Team has conducted comprehensive end-to-end verification of nopCommerce v4.70.0 (Build `v4.70-b112`) in accordance with the Master Test Plan (`MTP-NOP-v4.70`) and Test Strategy.
+In mature QA processes, a Release Readiness review evaluates whether a candidate build meets established quality gates before production deployment.
 
-All predefined quality gates, functional acceptance criteria, regression suites, automated performance benchmarks, and accessibility audits have been **successfully satisfied with zero outstanding Blocker (P0) or Major (P1) defects**.
+### Example Quality Gate Criteria:
 
-### Final QA Recommendation:
 ```text
-================================================================================
-                    FINAL DECISION: APPROVED FOR RELEASE
-================================================================================
-The Quality Assurance team formally certifies that Build v4.70-b112 satisfies
-all functional, non-functional, security, and accessibility standards for
-general production availability.
-================================================================================
+[ ] Zero open Blocker (P0) or Critical defects
+[ ] 100% of defined CI automated smoke and regression tests passing
+[ ] Acceptance criteria verified for all targeted release features
+[ ] Code review and static analysis / typecheck clean
+[ ] Deployment rollback procedure documented and verified
 ```
 
 ---
 
-## 2. Test Execution & Coverage Metrics
+## 2. Release Verification Dimensions (Template Matrix)
 
-| Quality Dimension | Target KPI | Achieved Metric | Evaluation |
-| :--- | :---: | :---: | :---: |
-| **Requirements Traceability (RTM)** | 100% P0/P1 Requirements | 100% (218 Scenarios) | **PASSED** |
-| **Test Case Execution Rate** | 100% Planned Tests | 100% (226 Executed) | **PASSED** |
-| **Test Case Pass Rate** | >= 95.0% | **100.0% (226 Passed)** | **PASSED** |
-| **Automated Playwright Specs** | 100% Pass Rate | **100.0% (50/50 Passed)** | **PASSED** |
-| **Cross-Browser Verification** | Chromium, Firefox, WebKit | Certified all 3 engines | **PASSED** |
-| **API Contract Validation** | 100% Passing | 100% (25/25 Scenarios) | **PASSED** |
-| **Accessibility Compliance** | WCAG 2.1 Level AA (0 Violations) | 0 Violations (axe-core) | **PASSED** |
-| **Performance Benchmark (k6)** | p95 < 500ms @ 50 VUs | **p95 = 210ms (Passed)** | **PASSED** |
-| **Database Integrity Checks** | 0 Orphan Records / ACID | 0 Anomalies Found | **PASSED** |
+| Verification Dimension | Evaluation Method | Standard Target KPI | Status in Pipeline |
+|:---|:---|:---|:---|
+| **Automated Playwright Suite** | `npm test` against Chromium | 100% passing | Implemented (50 tests active) |
+| **API Contract Validation** | Ajv schema validation | 100% passing schemas | Implemented in API suite |
+| **Accessibility Gate** | axe-core automated audit | 0 critical/serious violations | Implemented on 5 simulator routes |
+| **Type & Code Integrity** | `npm run lint`, `npm run typecheck` | 0 errors | Enforced in CI |
+| **Performance Health** | k6 local benchmarks | Sub-500ms baseline response | Example scripts available in repo |
+| **Database Queries** | Manual inspection SQL library | No referential orphan records | Library available under `database/` |
 
 ---
 
-## 3. Defect Severity & Resolution Distribution
+## 3. Residual Risk Assessment Template
 
-| Severity Level | Discovered (Cycle 1) | Resolved & Verified | Outstanding Open | Status |
-| :--- | :---: | :---: | :---: | :---: |
-| **S1 — Blocker / Critical** | 3 | 3 | **0** | **CLEARED** |
-| **S2 — Major** | 11 | 11 | **0** | **CLEARED** |
-| **S3 — Medium** | 6 | 6 | **0** | **CLEARED** |
-| **S4 — Low / Cosmetic** | 2 | 2 | **0** | **CLEARED** |
-| **TOTAL** | **22** | **22** | **0** | **CLEARED** |
+| Identified Risk Area | Probability | Impact | Mitigation Strategy | Assigned Role |
+|:---|:---:|:---:|:---|:---|
+| Simulator mock divergence from upstream API | Medium | Low | Maintain versioned schema contract tests in `automation/schemas/` | SDET / QA Engineer |
+| Network latency variations in CI runners | Low | Low | Built-in Playwright automatic retries (`retries: 2` in CI) | QA Engineer |
 
 ---
 
-## 4. Residual Risk Assessment & Mitigations
+## 4. Sign-Off Governance Approval Template
 
-| Identified Residual Risk | Likelihood | Impact | Mitigation Strategy | Owner |
-| :--- | :---: | :---: | :--- | :--- |
-| Database connection pool limits under extreme surge (>150 VUs) | Low | Medium | Connection pool increased to 250 in config; auto-scaling policy configured. | DevOps |
-| Third-party payment gateway mock divergence | Low | Low | Live gateway verification planned during 15-minute maintenance window using test card. | QA Lead |
-
----
-
-## 5. Formal Stakeholder Endorsements
-
-| Role | Name | Title | Decision | Signature Date |
-| :--- | :--- | :--- | :---: | :--- |
-| **QA Lead** | Deependra Singh | Senior QA Lead & Test Architect | **APPROVED** | September 30, 2026 |
-| **SDET Lead** | Quality Automation | Senior SDET | **APPROVED** | September 30, 2026 |
-| **Dev Lead** | Core Engineering | Software Development Lead | **APPROVED** | September 30, 2026 |
-| **Product Owner** | E-Commerce PM | Principal Product Manager | **APPROVED** | September 30, 2026 |
-| **DevOps Lead** | Infrastructure | Release & Site Reliability Lead | **APPROVED** | September 30, 2026 |
+| Governance Role | Representative Role Description | Review Status | Review Date |
+|:---|:---|:---:|:---:|
+| **QA / SDET Lead** | Verification of test results, automation pass rates, and bug logs | `[PENDING / APPROVED]` | `YYYY-MM-DD` |
+| **Development Lead** | Verification of code quality, unit tests, and resolved defect PRs | `[PENDING / APPROVED]` | `YYYY-MM-DD` |
+| **Product Manager** | Acceptance criteria verification and release readiness sign-off | `[PENDING / APPROVED]` | `YYYY-MM-DD` |
+| **DevOps / Release Lead** | CI/CD pipeline health, environment provisioning, and deployment plan | `[PENDING / APPROVED]` | `YYYY-MM-DD` |

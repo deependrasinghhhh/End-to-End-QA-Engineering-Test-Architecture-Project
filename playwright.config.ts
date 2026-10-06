@@ -66,6 +66,9 @@ export default defineConfig({
     command: 'node automation/staging-aut/server.js',
     url: 'http://localhost:5001',
     reuseExistingServer: true,
-    timeout: 120000
+    timeout: 120000,
+    env: {
+      ALLOW_TEST_RESET: 'true'
+    }
   }
 });

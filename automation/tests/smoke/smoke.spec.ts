@@ -41,7 +41,11 @@ test.describe('Smoke Test Suite - Core User & Admin Workflows', () => {
     expect(count).toBeGreaterThanOrEqual(1);
   });
 
-  test('SMOKE-05: Shopping cart inspection & checkout terms gating @smoke', async ({ cartPage }) => {
+  test('SMOKE-05: Shopping cart inspection & checkout terms gating @smoke', async ({ homePage, cartPage }) => {
+    await homePage.open();
+    await homePage.addProductToCart(1);
+    await homePage.waitForNotification();
+
     await cartPage.open();
     const items = await cartPage.getLineItemCount();
     expect(items).toBeGreaterThanOrEqual(1);
@@ -51,7 +55,11 @@ test.describe('Smoke Test Suite - Core User & Admin Workflows', () => {
     await cartPage.proceedToCheckout(false);
   });
 
-  test('SMOKE-06: End-to-End Guest Checkout & Order Number generation @smoke @critical', async ({ checkoutPage, page }) => {
+  test('SMOKE-06: End-to-End Guest Checkout & Order Number generation @smoke @critical', async ({ homePage, checkoutPage, page }) => {
+    await homePage.open();
+    await homePage.addProductToCart(1);
+    await homePage.waitForNotification();
+
     await checkoutPage.open();
     await checkoutPage.completeFullCheckout();
     

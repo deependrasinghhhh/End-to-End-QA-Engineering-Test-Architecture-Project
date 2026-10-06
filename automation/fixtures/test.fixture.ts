@@ -15,6 +15,7 @@ import { AdminProductsPage } from '../pages/admin/admin-products.page';
 import { AdminOrdersPage } from '../pages/admin/admin-orders.page';
 
 type NopCommerceFixtures = {
+  resetSimulatorState: void;
   homePage: HomePage;
   loginPage: LoginPage;
   registerPage: RegisterPage;
@@ -32,6 +33,15 @@ type NopCommerceFixtures = {
 };
 
 export const test = baseTest.extend<NopCommerceFixtures>({
+  resetSimulatorState: [async ({ request, baseURL }, use) => {
+    try {
+      const targetUrl = baseURL || 'http://localhost:5001';
+      await request.post(`${targetUrl}/api/test/reset`);
+    } catch {
+      // Graceful fallback if reset endpoint is not reachable/disabled
+    }
+    await use();
+  }, { auto: true }],
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
   },

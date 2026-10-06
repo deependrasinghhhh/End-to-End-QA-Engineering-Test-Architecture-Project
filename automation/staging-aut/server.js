@@ -17,151 +17,159 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// In-Memory Database State
-const state = {
-  users: [
-    {
-      id: 1,
-      guid: 'c9f18a22-381a-4c22-9dfa-80bb11234abc',
-      gender: 'M',
-      firstName: 'Alex',
-      lastName: 'Mercer',
-      email: 'customer@nopqa.local',
-      password: 'TestPassword123!',
-      company: 'Quality Assurance Labs',
-      roles: ['Registered'],
-      addresses: [
-        {
-          id: 1,
-          firstName: 'Alex',
-          lastName: 'Mercer',
-          email: 'customer@nopqa.local',
-          company: 'Quality Assurance Labs',
-          country: 'United States',
-          state: 'New York',
-          city: 'New York',
-          address1: '100 Broadway Suite 400',
-          zip: '10005',
-          phone: '2125550199'
-        }
-      ]
-    },
-    {
-      id: 2,
-      guid: 'a1122334-bb55-6677-8899-00aabbccddee',
-      gender: 'M',
-      firstName: 'Admin',
-      lastName: 'Manager',
-      email: 'admin@nopqa.local',
-      password: 'AdminPassword123!',
-      company: 'nopCommerce HQ',
-      roles: ['Administrators', 'Registered'],
-      addresses: []
-    }
-  ],
-  products: [
-    {
-      id: 1,
-      name: 'Build your own computer',
-      slug: 'build-your-own-computer',
-      category: 'Desktops',
-      sku: 'COMP_CUST',
-      price: 1200.00,
-      oldPrice: 1350.00,
-      stockQuantity: 50,
-      published: true,
-      shortDescription: 'Configure your custom desktop system with high-speed processors and customizable RAM.',
-      fullDescription: 'High performance custom PC suitable for software engineering, design, and gaming workflows.',
-      rating: 4.8
-    },
-    {
-      id: 2,
-      name: 'Apple MacBook Pro 13-inch',
-      slug: 'apple-macbook-pro-13-inch',
-      category: 'Notebooks',
-      sku: 'AP_MBP_13',
-      price: 1800.00,
-      oldPrice: 1950.00,
-      stockQuantity: 25,
-      published: true,
-      shortDescription: 'Apple M2 chip with 8-core CPU and 10-core GPU, 8GB unified memory.',
-      fullDescription: 'Portable workstation with Retina display and exceptional battery longevity.',
-      rating: 4.9
-    },
-    {
-      id: 3,
-      name: 'Asus N551JK-XO076H Laptop',
-      slug: 'asus-n551jk-xo076h-laptop',
-      category: 'Notebooks',
-      sku: 'AS_551_LP',
-      price: 1500.00,
-      oldPrice: 1600.00,
-      stockQuantity: 15,
-      published: true,
-      shortDescription: 'High-performance multimedia notebook with SonicMaster Premium audio.',
-      fullDescription: 'Powerful laptop built for creators and multithreaded computing tasks.',
-      rating: 4.5
-    },
-    {
-      id: 4,
-      name: 'Lenovo IdeaCentre 600 All-in-One PC',
-      slug: 'lenovo-ideacentre-600-all-in-one-pc',
-      category: 'Desktops',
-      sku: 'LE_IC_600',
-      price: 500.00,
-      oldPrice: 650.00,
-      stockQuantity: 40,
-      published: true,
-      shortDescription: 'Sleek all-in-one desktop PC designed for productivity and space saving.',
-      fullDescription: 'Modern all-in-one system with vibrant display and integrated audio.',
-      rating: 4.2
-    }
-  ],
-  cart: [],
-  wishlist: [],
-  compare: [],
-  orders: [
-    {
-      id: 1042,
-      orderNumber: 'ORD-1042',
-      orderGuid: '7b88910a-3199-42b8-9331-52a12903bb41',
-      customerId: 1,
-      customerEmail: 'customer@nopqa.local',
-      date: new Date().toISOString().split('T')[0],
-      status: 'Complete',
-      paymentStatus: 'Paid',
-      shippingStatus: 'Delivered',
-      shippingMethod: 'Ground',
-      paymentMethod: 'Check / Money Order',
-      subtotal: 1200.00,
-      shipping: 0.00,
-      tax: 96.00,
-      orderTotal: 1296.00,
-      items: [
-        {
-          productId: 1,
-          productName: 'Build your own computer',
-          quantity: 1,
-          unitPrice: 1200.00,
-          total: 1200.00,
-          attributes: 'Processor: 2.5 GHz Intel Core i5 [+$100.00], RAM: 8GB [+$60.00]'
-        }
-      ],
-      billingAddress: {
+// In-Memory Database State Factory
+function createInitialState() {
+  return {
+    users: [
+      {
+        id: 1,
+        guid: 'c9f18a22-381a-4c22-9dfa-80bb11234abc',
+        gender: 'M',
         firstName: 'Alex',
         lastName: 'Mercer',
         email: 'customer@nopqa.local',
-        address1: '100 Broadway Suite 400',
-        city: 'New York',
-        state: 'New York',
-        zip: '10005',
-        country: 'United States'
+        password: 'TestPassword123!',
+        company: 'Quality Assurance Labs',
+        roles: ['Registered'],
+        addresses: [
+          {
+            id: 1,
+            firstName: 'Alex',
+            lastName: 'Mercer',
+            email: 'customer@nopqa.local',
+            company: 'Quality Assurance Labs',
+            country: 'United States',
+            state: 'New York',
+            city: 'New York',
+            address1: '100 Broadway Suite 400',
+            zip: '10005',
+            phone: '2125550199'
+          }
+        ]
+      },
+      {
+        id: 2,
+        guid: 'a1122334-bb55-6677-8899-00aabbccddee',
+        gender: 'M',
+        firstName: 'Admin',
+        lastName: 'Manager',
+        email: 'admin@nopqa.local',
+        password: 'AdminPassword123!',
+        company: 'nopCommerce HQ',
+        roles: ['Administrators', 'Registered'],
+        addresses: []
       }
-    }
-  ],
-  appliedCoupon: null,
-  activeSessionUser: null
-};
+    ],
+    products: [
+      {
+        id: 1,
+        name: 'Build your own computer',
+        slug: 'build-your-own-computer',
+        category: 'Desktops',
+        sku: 'COMP_CUST',
+        price: 1200.00,
+        oldPrice: 1350.00,
+        stockQuantity: 50,
+        published: true,
+        shortDescription: 'Configure your custom desktop system with high-speed processors and customizable RAM.',
+        fullDescription: 'High performance custom PC suitable for software engineering, design, and gaming workflows.',
+        rating: 4.8
+      },
+      {
+        id: 2,
+        name: 'Apple MacBook Pro 13-inch',
+        slug: 'apple-macbook-pro-13-inch',
+        category: 'Notebooks',
+        sku: 'AP_MBP_13',
+        price: 1800.00,
+        oldPrice: 1950.00,
+        stockQuantity: 25,
+        published: true,
+        shortDescription: 'Apple M2 chip with 8-core CPU and 10-core GPU, 8GB unified memory.',
+        fullDescription: 'Portable workstation with Retina display and exceptional battery longevity.',
+        rating: 4.9
+      },
+      {
+        id: 3,
+        name: 'Asus N551JK-XO076H Laptop',
+        slug: 'asus-n551jk-xo076h-laptop',
+        category: 'Notebooks',
+        sku: 'AS_551_LP',
+        price: 1500.00,
+        oldPrice: 1600.00,
+        stockQuantity: 15,
+        published: true,
+        shortDescription: 'High-performance multimedia notebook with SonicMaster Premium audio.',
+        fullDescription: 'Powerful laptop built for creators and multithreaded computing tasks.',
+        rating: 4.5
+      },
+      {
+        id: 4,
+        name: 'Lenovo IdeaCentre 600 All-in-One PC',
+        slug: 'lenovo-ideacentre-600-all-in-one-pc',
+        category: 'Desktops',
+        sku: 'LE_IC_600',
+        price: 500.00,
+        oldPrice: 650.00,
+        stockQuantity: 40,
+        published: true,
+        shortDescription: 'Sleek all-in-one desktop PC designed for productivity and space saving.',
+        fullDescription: 'Modern all-in-one system with vibrant display and integrated audio.',
+        rating: 4.2
+      }
+    ],
+    cart: [],
+    wishlist: [],
+    compare: [],
+    orders: [
+      {
+        id: 1042,
+        orderNumber: 'ORD-1042',
+        orderGuid: '7b88910a-3199-42b8-9331-52a12903bb41',
+        customerId: 1,
+        customerEmail: 'customer@nopqa.local',
+        date: new Date().toISOString().split('T')[0],
+        status: 'Complete',
+        paymentStatus: 'Paid',
+        shippingStatus: 'Delivered',
+        shippingMethod: 'Ground',
+        paymentMethod: 'Check / Money Order',
+        subtotal: 1200.00,
+        shipping: 0.00,
+        tax: 96.00,
+        orderTotal: 1296.00,
+        items: [
+          {
+            productId: 1,
+            productName: 'Build your own computer',
+            quantity: 1,
+            unitPrice: 1200.00,
+            total: 1200.00,
+            attributes: 'Processor: 2.5 GHz Intel Core i5 [+$100.00], RAM: 8GB [+$60.00]'
+          }
+        ],
+        billingAddress: {
+          firstName: 'Alex',
+          lastName: 'Mercer',
+          email: 'customer@nopqa.local',
+          address1: '100 Broadway Suite 400',
+          city: 'New York',
+          state: 'New York',
+          zip: '10005',
+          country: 'United States'
+        }
+      }
+    ],
+    appliedCoupon: null,
+    activeSessionUser: null
+  };
+}
+
+let state = createInitialState();
+
+function resetState() {
+  state = createInitialState();
+}
 
 // ==============================================================================
 // HTML TEMPLATE RENDER HELPERS
@@ -829,6 +837,11 @@ app.get('/search', (req, res) => {
 
 // Shopping Cart
 app.get('/cart', (req, res) => {
+  if (req.query.coupon === 'applied') {
+    state.appliedCoupon = 'DISCOUNT10';
+  } else if (req.query.coupon === 'removed') {
+    state.appliedCoupon = null;
+  }
   const items = state.cart;
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const discountAmount = state.appliedCoupon === 'DISCOUNT10' ? subtotal * 0.10 : 0.00;
@@ -1752,6 +1765,8 @@ app.post('/api/checkout/orders', (req, res) => {
     shipping: 0.00,
     tax: 96.00,
     orderTotal: 1296.00,
+    total: 1296.00,
+    createdAt: new Date().toISOString(),
     items: [...state.cart]
   };
   state.orders.push(newOrder);
@@ -1783,11 +1798,20 @@ app.patch('/api/admin/orders/:id/status', (req, res) => {
   res.status(200).json(order);
 });
 
+// Test Reset Endpoint - exposed only when ALLOW_TEST_RESET=true
+if (process.env.ALLOW_TEST_RESET === 'true') {
+  app.post('/api/test/reset', (req, res) => {
+    resetState();
+    res.status(200).json({ success: true, message: 'Simulator state reset to initial factory data' });
+  });
+}
+
 // App listen
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`[AUT Staging Engine] nopCommerce v4.70 running on http://localhost:${PORT}`);
+    console.log(`[AUT Staging Engine] nopCommerce-inspired local staging simulator running on http://localhost:${PORT}`);
   });
 }
 
 module.exports = app;
+

@@ -1,17 +1,20 @@
-import { test as base } from './test.fixture';
+import { test as base, expect } from './test.fixture';
+import { ENV } from '../config/environment';
 
-export const testAsCustomer = base.extend<{ authenticatedPage: void }>({
-  authenticatedPage: async ({ homePage, loginPage }, use) => {
+export const testAsCustomer = base.extend<{ authenticatedCustomer: void }>({
+  authenticatedCustomer: [async ({ loginPage }, use) => {
     await loginPage.open();
-    await loginPage.login('customer@nopqa.local', 'TestPassword123!');
+    await loginPage.login(ENV.DEFAULT_CUSTOMER.email, ENV.DEFAULT_CUSTOMER.password);
     await use();
-  }
+  }, { auto: true }]
 });
 
-export const testAsAdmin = base.extend<{ adminAuthenticatedPage: void }>({
-  adminAuthenticatedPage: async ({ adminLoginPage }, use) => {
+export const testAsAdmin = base.extend<{ authenticatedAdmin: void }>({
+  authenticatedAdmin: [async ({ adminLoginPage }, use) => {
     await adminLoginPage.open();
-    await adminLoginPage.login('admin@nopqa.local', 'AdminPassword123!');
+    await adminLoginPage.login(ENV.ADMIN_USER.email, ENV.ADMIN_USER.password);
     await use();
-  }
+  }, { auto: true }]
 });
+
+export { expect };

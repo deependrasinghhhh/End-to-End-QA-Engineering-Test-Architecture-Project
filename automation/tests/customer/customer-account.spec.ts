@@ -1,11 +1,6 @@
-import { test, expect } from '../../fixtures/test.fixture';
+import { testAsCustomer as test, expect } from '../../fixtures/auth.fixture';
 
 test.describe('Customer Account Management Suite', () => {
-
-  test.beforeEach(async ({ loginPage }) => {
-    await loginPage.open();
-    await loginPage.login('customer@nopqa.local', 'TestPassword123!');
-  });
 
   test('CUST-01: Update customer profile information @customer', async ({ customerInfoPage }) => {
     await customerInfoPage.open();

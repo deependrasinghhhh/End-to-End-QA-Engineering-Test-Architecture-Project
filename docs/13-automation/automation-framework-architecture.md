@@ -47,8 +47,8 @@ automation/
 │   └── header.component.ts         # Top bar, search input, cart badge, navigation menu
 │
 ├── fixtures/                       # Custom Playwright test extensions
-│   ├── test.fixture.ts             # Injected Page Objects fixture
-│   └── auth.fixture.ts             # Pre-authenticated customer and admin browser contexts
+│   ├── test.fixture.ts             # Injected Page Objects fixture + resetSimulatorState auto-fixture
+│   └── auth.fixture.ts             # Pre-authenticated customer and admin test fixtures
 │
 ├── api/                            # Strongly typed REST API client classes
 │   ├── auth.api.ts
@@ -57,15 +57,16 @@ automation/
 │   └── order.api.ts
 │
 ├── utils/                          # Common Utilities
-│   ├── test-data-generator.ts      # Dynamic emails, addresses, names (Faker / random)
-│   ├── logger.ts                   # Structured timestamped console logging
-│   └── db-helper.ts                # PostgreSQL direct client query utility
+│   └── test-data-generator.ts      # Dynamic emails, names, addresses
 │
-├── test-data/                      # Static deterministic test data fixtures (JSON)
-│   ├── users.json
-│   ├── products.json
-│   ├── checkout-data.json
-│   └── addresses.json
+├── schemas/                        # JSON Schemas (Draft-07) for API contract validation
+│   ├── auth.schema.json
+│   ├── product.schema.json
+│   └── order.schema.json
+│
+├── staging-aut/                    # Local Staging Simulator
+│   ├── server.js                   # Express.js simulator with state factory and reset route
+│   └── public/                     # Storefront styles and client scripts
 │
 ├── playwright.config.ts            # Master Playwright configuration file
 ├── tsconfig.json                   # TypeScript compiler options and path aliases
@@ -74,40 +75,26 @@ automation/
 
 ---
 
-## 3. Dependency Injection & Custom Fixture Pattern
+## 3. Dependency Injection & State Reset Fixture Pattern
 
-Instead of instantiating Page Objects inside every test manually, custom fixtures (`automation/fixtures/test.fixture.ts`) inject pre-initialized pages directly into test parameters:
+Instead of instantiating Page Objects inside every test manually, custom fixtures (`automation/fixtures/test.fixture.ts`) inject pre-initialized pages and execute the simulator state reset before each test:
 
 ```typescript
-import { test as base } from '@playwright/test';
-import { HomePage } from '../pages/home.page';
-import { LoginPage } from '../pages/login.page';
-import { CartPage } from '../pages/cart.page';
-import { CheckoutPage } from '../pages/checkout.page';
-
-type Pages = {
-  homePage: HomePage;
-  loginPage: LoginPage;
-  cartPage: CartPage;
-  checkoutPage: CheckoutPage;
-};
-
-export const test = base.extend<Pages>({
+export const test = baseTest.extend<NopCommerceFixtures>({
+  resetSimulatorState: [async ({ request, baseURL }, use) => {
+    try {
+      const targetUrl = baseURL || 'http://localhost:5001';
+      await request.post(`${targetUrl}/api/test/reset`);
+    } catch {
+      // Graceful fallback
+    }
+    await use();
+  }, { auto: true }],
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
   },
-  loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page));
-  },
-  cartPage: async ({ page }, use) => {
-    await use(new CartPage(page));
-  },
-  checkoutPage: async ({ page }, use) => {
-    await use(new CheckoutPage(page));
-  },
+  // ... other page objects
 });
-
-export { expect } from '@playwright/test';
 ```
 
 ---
