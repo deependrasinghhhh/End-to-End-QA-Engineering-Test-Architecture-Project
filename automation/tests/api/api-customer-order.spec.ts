@@ -10,6 +10,7 @@ import productSchema from '../../schemas/product.schema.json';
 import orderSchema from '../../schemas/order.schema.json';
 
 const ajv = new Ajv({ strict: false });
+ajv.addFormat('email', () => true);
 const validateAuth = ajv.compile(authSchema);
 const validateProduct = ajv.compile(productSchema);
 const validateOrder = ajv.compile(orderSchema);

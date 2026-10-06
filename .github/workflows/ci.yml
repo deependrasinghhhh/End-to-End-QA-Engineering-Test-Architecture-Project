@@ -36,7 +36,7 @@ jobs:
       - name: Run TypeScript Typecheck
         run: npm run typecheck
 
-      - name: Run Playwright Tests (50 Tests: Smoke, Regression, Critical, Customer, Admin, API, A11y)
+      - name: "Run Playwright Tests (50 Tests - Smoke, Regression, Critical, Customer, Admin, API, A11y)"
         run: npx playwright test --project=chromium
         env:
           CI: true
