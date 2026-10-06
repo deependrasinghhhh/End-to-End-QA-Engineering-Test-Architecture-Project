@@ -5,6 +5,9 @@ import * as path from 'path';
 // Load environment variables from .env
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+// Allow Firefox and WebKit on Windows without strict host DLL validation
+process.env.PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = 'true';
+
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5001';
 
 export default defineConfig({
